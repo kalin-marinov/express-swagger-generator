@@ -1,4 +1,3 @@
-declare namespace expressSwaggerGenerator {}
 
 declare module 'express-swagger-generator' {
 
@@ -28,4 +27,8 @@ declare module 'express-swagger-generator' {
 
     
     export = generator;
+}
+
+declare namespace expressSwaggerGenerator {
+    
 }
