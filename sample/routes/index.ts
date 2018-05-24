@@ -1,4 +1,5 @@
 import * as express from 'express';
+import { IHelloResponse } from '../@types/api/IHelloResponse';
 
 var router = express.Router();
 
@@ -7,12 +8,12 @@ var router = express.Router();
  * @route GET /api/hello
  * @group test - Testing query params
  * @param {string} name.query.required - Name of the user
- * @returns {object} 200 - An array of user info
- * @returns {Error} 500 - Unexpected error
+ * @returns {IHelloResponse} 200 - An array of user info
+ * @returns {object} 500 - Unexpected error
  */
 router.get('/api/hello', function (req, res, next) {
   let name = req.query.name
-  res.json({message: `hello ${name}`});
+  res.json({message: `hello ${name}`} as IHelloResponse);
 });
 
 /**
@@ -21,7 +22,7 @@ router.get('/api/hello', function (req, res, next) {
  * @group test - Testing query params
  * @param {string} name.path.required - Name of the user
  * @returns {object} 200 - An array of user info
- * @returns {Error} 500 - Unexpected error
+ * @returns {object} 500 - Unexpected error
  */
 router.get('/api/hello/:name', function (req, res, next) {
   let name = req.params.name

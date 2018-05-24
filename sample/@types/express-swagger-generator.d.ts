@@ -16,7 +16,8 @@ declare module 'express-swagger-generator' {
             schemes: string[]
         },
         basedir: string,
-        files: string[]
+        files: string[],
+        typeDefinitions?: string
     }
 
     interface IOptionParserFunction {

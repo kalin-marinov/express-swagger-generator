@@ -11,8 +11,9 @@ const path = require('path');
 const parser = require('swagger-parser');
 const swaggerHelpers = require('./swagger-helpers');
 const doctrineFile = require('doctrine-file');
-//const swaggerUi = require('swagger-ui-express');
 const swaggerUi = require('express-swaggerize-ui');
+const TJS = require("typescript-json-schema");
+
 
 /**
  * Parses the provided API file for JSDoc comments.
@@ -24,7 +25,7 @@ const swaggerUi = require('express-swaggerize-ui');
 function parseApiFile(file) {
 	const content = fs.readFileSync(file, 'utf-8');
 
-	let comments = doctrineFile.parseFileContent(content, {unwrap: true, sloppy: true, tags: null, recoverable: true});
+	let comments = doctrineFile.parseFileContent(content, { unwrap: true, sloppy: true, tags: null, recoverable: true });
 	return comments;
 }
 function parseRoute(str) {
@@ -43,19 +44,23 @@ function parseField(str) {
 		required: split[2] && split[2] === 'required' || false
 	}
 }
+
+const builtInTypes = ['string', 'number', 'any', 'object', 'error']
+
+
 function parseType(obj) {
-	if(!obj) return undefined;
-	if(!obj.name) return 'string';
+	if (!obj) return undefined;
+	if (!obj.name) return 'string';
 	const spl = obj.name.split('.');
-	if(spl.length > 1 && spl[1] == 'model'){
+	if (spl.length > 0 && !builtInTypes.some(type => spl[0] == type)) {
 		return spl[0];
 	}
 	else return obj.name;
 }
-function parseSchema(obj){
-	if(!obj.name) return undefined;
+function parseSchema(obj) {
+	if (!obj.name) return undefined;
 	const spl = obj.name.split('.');
-	if(spl.length > 1 && spl[1] == 'model'){
+	if (spl.length > 0 && !builtInTypes.some(type => spl[0] == type)) {
 		return { "$ref": "#/definitions/" + spl[0] };
 	}
 	else return undefined;
@@ -65,9 +70,9 @@ function parseReturn(tags) {
 	for (let i in tags) {
 		if (tags[i]['title'] == 'returns' || tags[i]['title'] == 'return') {
 			let description = tags[i]['description'].split("-")
-			rets[description[0]] = {description: description[1]};
+			rets[description[0]] = { description: description[1] };
 			const type = parseType(tags[i].type);
-			if(type){
+			if (type) {
 				rets[description[0]].type = type;
 				rets[description[0]].schema = parseSchema(tags[i].type)
 			}
@@ -96,17 +101,17 @@ function parseConsumes(str) {
 	return str.split(/\s+/);
 }
 
-function parseTypedef(tags){
+function parseTypedef(tags) {
 	const typeName = tags[0]['name'];
 	let details = {
 		required: [],
 		properties: {}
 	};
-	for(let i = 1; i < tags.length; i++){
-		if(tags[i].title == 'property'){
+	for (let i = 1; i < tags.length; i++) {
+		if (tags[i].title == 'property') {
 			let propName = tags[i].name;
 			const required = propName.split('.')[1];
-			if(required && required == 'required'){
+			if (required && required == 'required') {
 				propName = propName.split('.')[0];
 				details.required.push(propName);
 			}
@@ -116,7 +121,7 @@ function parseTypedef(tags){
 			};
 		}
 	}
-	return {typeName, details};
+	return { typeName, details };
 }
 
 
@@ -126,7 +131,7 @@ function fileFormat(comments) {
 	for (let i in comments) {
 		let desc = parseDescription(comments);
 		if (i == 'tags') {
-			if(comments[i].length > 0 && comments[i][0]['title'] && comments[i][0]['title'] == 'typedef'){
+			if (comments[i].length > 0 && comments[i][0]['title'] && comments[i][0]['title'] == 'typedef') {
 
 				const typedefParsed = parseTypedef(comments[i]);
 				definitions[typedefParsed.typeName] = typedefParsed.details;
@@ -138,7 +143,7 @@ function fileFormat(comments) {
 					route = parseRoute(comments[i][j]['description'])
 					let tag = parseTag(comments[i])
 					parameters[route.uri] = parameters[route.uri] || {}
-					parameters[route.uri][route.method] = parameters[route.uri][route.method]  || {}
+					parameters[route.uri][route.method] = parameters[route.uri][route.method] || {}
 					parameters[route.uri][route.method]['parameters'] = []
 					parameters[route.uri][route.method]['description'] = desc
 					parameters[route.uri][route.method]['tags'] = [tag[0]]
@@ -182,7 +187,7 @@ function fileFormat(comments) {
 			}
 		}
 	}
-	return {parameters: parameters, tags: tags, definitions: definitions}
+	return { parameters: parameters, tags: tags, definitions: definitions }
 }
 
 /**
@@ -212,6 +217,35 @@ function convertGlobPaths(base, globs) {
 	}, []);
 }
 
+
+/**
+ * Extracts type definition from files using glob pattern
+ * @function
+ * @param {string} globPath 
+ * @requires glob
+ */
+function getTypeDefinitions(globPath) {
+
+	// optionally pass argument to schema generator
+	const settings = /** @type {PartialArgs} */ {
+		required: true
+	};
+
+	const compilerOptions = /** @type {CompilerOptions} */ {
+		strictNullChecks: true,
+		lib: ['es2017', 'es6']
+	}
+
+	let files = glob.sync(globPath);
+
+	const program = TJS.getProgramFromFiles(files, compilerOptions);
+	const schema = TJS.generateSchema(program, "*", settings);
+
+	return schema;
+}
+
+
+
 /**
  * Generates the swagger spec
  * @function
@@ -235,16 +269,19 @@ module.exports = function (app) {
 		let swaggerObject = swaggerHelpers.swaggerizeObj(options.swaggerDefinition);
 		let apiFiles = convertGlobPaths(options.basedir, options.files);
 
+
+		// Parse typescript definitions:
+		let typescriptDefinitions = getTypeDefinitions(options.typeDefinitions);
+		swaggerHelpers.addDataToSwaggerObject(swaggerObject, [{ definitions: typescriptDefinitions.definitions }]);
+
 		// Parse the documentation in the APIs array.
 		for (let i = 0; i < apiFiles.length; i = i + 1) {
 			let parsedFile = parseApiFile(apiFiles[i]);
-			//console.log(JSON.stringify(parsedFile))
 			let comments = filterJsDocComments(parsedFile);
 
 			for (let j in comments) {
-
-				let parsed = fileFormat(comments[j])
-				swaggerHelpers.addDataToSwaggerObject(swaggerObject, [{paths: parsed.parameters, tags: parsed.tags, definitions: parsed.definitions}]);
+				let jsDocDefinitions = fileFormat(comments[j]);
+				swaggerHelpers.addDataToSwaggerObject(swaggerObject, [{ paths: jsDocDefinitions.parameters, tags: jsDocDefinitions.tags, definitions: jsDocDefinitions.definitions }]);
 			}
 		}
 
