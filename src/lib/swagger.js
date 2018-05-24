@@ -58,11 +58,19 @@ function parseType(obj) {
 	else return obj.name;
 }
 function parseSchema(obj) {
+	// Check if it's an array
+	if (obj.expression && obj.expression.name == 'Array') {
+		let innerType = obj.applications[0].name;
+		return { type: "array", items: { $ref: `#/definitions/${innerType}` } };
+	}
+
 	if (!obj.name) return undefined;
 	const spl = obj.name.split('.');
+
 	if (spl.length > 0 && !builtInTypes.some(type => spl[0] == type)) {
 		return { "$ref": "#/definitions/" + spl[0] };
 	}
+
 	else return undefined;
 }
 function parseReturn(tags) {
@@ -72,6 +80,7 @@ function parseReturn(tags) {
 			let description = tags[i]['description'].split("-")
 			rets[description[0]] = { description: description[1] };
 			const type = parseType(tags[i].type);
+
 			if (type) {
 				rets[description[0]].type = type;
 				rets[description[0]].schema = parseSchema(tags[i].type)
