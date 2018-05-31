@@ -7,12 +7,18 @@
         {
             "type": "node",
             "request": "launch",
-            "name": "Start Sample",
+            "name": "Start Sample Typescript",
             "preLaunchTask": "build",
             "program": "${workspaceFolder}/sample/bin/www.ts",
             "outFiles": [
                 "${workspaceFolder}/sample/build/**/*.js"
             ]
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Start Sample Javascript",
+            "program": "${workspaceFolder}/sample-js/bin/www.js",
         }
     ]
 }

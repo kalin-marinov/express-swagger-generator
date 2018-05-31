@@ -1,18 +1,18 @@
-import * as express from 'express';
-import * as path from 'path';
-import * as logger from 'morgan';
+const express = require('express');
+const path = require('path');
+const logger = require('morgan');
+const configureSwagger = require('./config/swagger.config');
 
-import { configureSwagger } from './config/swagger.config';
+const indexRouter = require('./routes/index');
+const authRouter = require('./routes/auth');
+const handleError = require('./modules/error.module');
 
 console.log('starting');
 
-import indexRouter from './routes/index';
-import authRouter from './routes/auth';
-import { handleError } from './modules/error.module';
+
 
 var app = express();
 configureSwagger(app);
-
 
 app.use(logger('dev'));
 app.use(express.json());
@@ -28,6 +28,4 @@ app.use(function (req, res, next) {
 
 app.use(handleError);
 
-
-
-export default app;
+module.exports = app;

@@ -1,7 +1,4 @@
-import * as express from 'express';
-import { IPerson, SamplePerson } from '../@types/api/IPerson';
-import { IAddress, SampleAddress } from '../@types/api/IAddress';
-import { AddressType } from '../@types/api/AddressType';
+const express = require('express');
 
 var router = express.Router();
 
@@ -14,7 +11,7 @@ var router = express.Router();
  */
 router.get('/api/people', function (req, res, next) {
   let name = req.query.name
-  res.json([SamplePerson, SamplePerson]);
+  res.json([{ firstname: "john", lastname: "doe", born: new Date(), addresses: [] }]);
 });
 
 /**
@@ -27,7 +24,7 @@ router.get('/api/people', function (req, res, next) {
  */
 router.get('/api/people/:name', function (req, res, next) {
   let name = req.params.name
-  res.json({ firstname: name, lastname: "doe", born: new Date() } as IPerson);
+  res.json({ firstname: name, lastname: "doe", born: new Date() });
 });
 
 
@@ -55,7 +52,7 @@ router.get('/api/people/:name/addresses', function (req, res, next) {
  */
 router.get('/api/people/:name/addresses/:addressType', function (req, res, next) {
   let addressType = req.params.addressType;
-  res.json([{ number: 10, street: "random str", type: addressType } as IAddress]);
+  res.json([{ number: 10, street: "random str", type: addressType }]);
 });
 
 
@@ -68,7 +65,7 @@ router.get('/api/people/:name/addresses/:addressType', function (req, res, next)
  * @returns {object} 500 - Unexpected error
  */
 router.post('/api/people', function (req, res, next) {
-  let personData = req.body as IPerson;
+  let personData = req.body;
   res.status(201).json(personData);
 });
 
@@ -82,7 +79,7 @@ router.post('/api/people', function (req, res, next) {
  * @returns {object} 500 - Unexpected error
  */
 router.put('/api/people', function (req, res, next) {
-  let people = req.body as IPerson[];
+  let people = req.body;
   res.json({ message: `Created ${people.length} entries` });
 });
 
@@ -99,5 +96,4 @@ router.delete('/api/people/:name', function (req, res, next) {
 });
 
 
-
-export default router;
+module.exports = router;

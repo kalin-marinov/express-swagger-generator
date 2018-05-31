@@ -1,17 +1,16 @@
 import { AddressType } from './AddressType';
+import { IAddress, SampleAddress } from './IAddress';
 
-export interface IPerson{
+export interface IPerson {
 
-    firstname : string;
+    firstname: string;
 
-    lastname : string;
+    lastname: string;
 
     born: Date,
 
-    addresses: {
-        type: AddressType
-        street: string
-        number: number
-    }[]
-
+    addresses: IAddress[]
 }
+
+const SamplePerson: IPerson = { firstname: "john", lastname: "doe", born: new Date(), addresses: [SampleAddress] };
+export { SamplePerson };
