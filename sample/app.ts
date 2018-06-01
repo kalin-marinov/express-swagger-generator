@@ -3,16 +3,13 @@ import * as path from 'path';
 import * as logger from 'morgan';
 
 import { configureSwagger } from './config/swagger.config';
-
-console.log('starting');
+import { handleError } from './modules/error.module';
 
 import indexRouter from './routes/index';
 import authRouter from './routes/auth';
-import { handleError } from './modules/error.module';
 
 var app = express();
 configureSwagger(app);
-
 
 app.use(logger('dev'));
 app.use(express.json());

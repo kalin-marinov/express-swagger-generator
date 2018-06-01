@@ -7,7 +7,7 @@ export function configureSwagger(app: express.Express) {
     swaggerDefinition: {
       info: {
         description: 'WEB API Test',
-        title: 'WHITELABEL API',
+        title: 'WEB API Test',
         version: '1.0.0',
       },
       host: "localhost:3000",

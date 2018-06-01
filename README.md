@@ -2,7 +2,7 @@
 This is a fork of [express-swagger-generator](https://github.com/pgroot/express-swagger-generator) 
 
 With the difference it supports reading typescript definitions along with the JSDOC definitions.
-The typescript parsing is based on [typescript-json-schema](https://github.com/YousefED/typescript-json-schema) 
+The typescript parsing is based on [typescript-json-schema](https://github.com/YousefED/typescript-json-schema) library.
 
 Support of enums and arrays is also added in this library.
 
@@ -21,7 +21,7 @@ let options = {
   swaggerDefinition: {
     info: {
       description: 'WEB API Test',
-      title: 'WHITELABEL API',
+      title: 'WEB API Test',
       version: '1.0.0',
     },
     host: "localhost:3000",
@@ -44,6 +44,27 @@ Open http://<app_host>:<app_port>/api-docs in your browser to view the documenta
 
 #### How to document the API
 
+Definitions can be done via Typescript interface/class/enum 
+
+```
+// IPoint.ts
+export interface IPoint {
+    x: number;
+    y: number;
+}
+```
+
+Or using JSDOC definition (as in the original library)
+
+```
+/**
+ * @typedef IPoint
+ * @property {integer} x.required
+ * @property {integer} y.required
+ * @property {string} color
+ */
+```
+
 ```
 /**
  * This function comment is parsed by doctrine
@@ -51,23 +72,14 @@ Open http://<app_host>:<app_port>/api-docs in your browser to view the documenta
  * @group foo - Operations about user
  * @param {string} email.query.required - username or email
  * @param {string} password.query.required - user's password.
- * @returns {TypescriptInterfaceOrClass} 200 - An array of user info
+ * @returns {IPoint} 200 - An array of user info
  * @returns {Error}  default - Unexpected error
  */
-exports.foo = function() {}
+router.get('/api', function (req, res, next) { ... });
 ```
 
-For JSDOC model definitions:
-
-```
-/**
- * @typedef Point
- * @property {integer} x.required
- * @property {integer} y.required
- * @property {string} color
- */
-```
 
 #### More
 TODO: See why .d.ts cannot be parsed at the moment
+
 TODO: See if dropdowns can be present for Enums using Swagger 3
