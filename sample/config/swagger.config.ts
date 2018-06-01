@@ -1,9 +1,8 @@
 import * as express from 'express';
 import * as path from 'path';
-import swaggerGenerator = require('express-swagger-generator');
+import * as swaggerGenerator from 'express-swagger-generator';
 
 export function configureSwagger(app: express.Express) {
-
   let options = {
     swaggerDefinition: {
       info: {

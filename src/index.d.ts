@@ -1,8 +1,8 @@
+import * as express from 'express';
 
-declare module 'express-swagger-generator' {
+declare function expressSwaggerGenerator(app: express.Express): expressSwaggerGenerator.IOptionParserFunction;
 
-    import * as express from 'express';
-
+declare namespace expressSwaggerGenerator {
     interface ISwaggerOptions {
         swaggerDefinition: {
             info: {
@@ -23,13 +23,6 @@ declare module 'express-swagger-generator' {
     interface IOptionParserFunction {
         (options: ISwaggerOptions): void;
     }
-
-    function generator(app: express.Express): IOptionParserFunction;
-
-    
-    export = generator;
 }
 
-declare namespace expressSwaggerGenerator {
-    
-}
+export = expressSwaggerGenerator;
