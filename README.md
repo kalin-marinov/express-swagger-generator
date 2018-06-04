@@ -60,7 +60,7 @@ Or using JSDOC definition (as in the original library)
 /**
  * @typedef IPoint
  * @property {integer} x.required
- * @property {integer} y.required
+ * @property {integer} y.required - Some description for point
  * @property {string} color
  */
 ```
