@@ -49,7 +49,7 @@ router.get('/api/people/:name/addresses', function (req, res, next) {
  * @route GET /api/people/{name}/addresses/{addressType}
  * @group People Addresses - For the addresses of the people
  * @param {string} name.path.required - Name of the person
- * @param {AddressType} addressType.path - Address type
+ * @param {AddressType} addressType.path.required - Address type
  * @returns {IAddress[]} 200 - Gets specific address of a person
  * @returns {object} 500 - Unexpected error
  */
@@ -63,7 +63,7 @@ router.get('/api/people/:name/addresses/:addressType', function (req, res, next)
  * This function comment is parsed by doctrine
  * @route POST /api/people
  * @group People - Information about them people
- * @param {IPerson} person.body - Information for the person
+ * @param {IPerson} person.body.required - Information for the person
  * @returns {IPerson} 201 - An array of user info
  * @returns {object} 500 - Unexpected error
  */
@@ -77,7 +77,7 @@ router.post('/api/people', function (req, res, next) {
  * Override all people
  * @route PUT /api/people
  * @group People - Information about them people
- * @param {IPerson[]} people.body - Information for the person
+ * @param {IPerson[]} people.body.required - Information for the person
  * @returns {IMessageResponse} 200 - An array of people
  * @returns {object} 500 - Unexpected error
  */

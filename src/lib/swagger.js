@@ -197,13 +197,15 @@ function fileFormat(comments) {
                 }
                 if (title == 'param') {
                     let field = parseField(comments[i][j]['name'])
+                    let schema = parseSchema(comments[i][j]['type']);
+
                     params.push({
                         name: field.name,
                         in: field.parameter_type,
                         description: comments[i][j]['description'],
                         required: field.required,
-                        type: parseType(comments[i][j]['type']),
-                        schema: parseSchema(comments[i][j]['type'])
+                        type: !schema ? parseType(comments[i][j]['type']) : undefined,
+                        schema: schema
                     })
                 }
 
