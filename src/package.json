@@ -1,6 +1,6 @@
 {
   "name": "express-swagger-generator",
-  "version": "1.1.4",
+  "version": "1.1.14",
   "description": "Generates swagger doc & ui based on express existing routes.",
   "main": "index.js",
   "scripts": {},
@@ -26,9 +26,9 @@
     "doctrine-file": "^1.0.2",
     "glob": "^7.0.3",
     "recursive-iterator": "^2.0.3",
-    "swagger-parser": "^3.4.0",
     "typescript-json-schema": "^0.24.1",
-    "express-swaggerize-ui": "^1.0.2"
+    "swagger-parser": "^5.0.5",
+    "express-swaggerize-ui": "^1.0.3"
   },
   "devDependencies": {
     "@types/express": "^4.11.1",

@@ -113,6 +113,7 @@ function _getSwaggerSchemaWrongProperties() {
 		'scheme',
 		'response',
 		'parameter',
+		'deprecated'
 	];
 }
 

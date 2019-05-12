@@ -60,8 +60,9 @@ Or using JSDOC definition (as in the original library)
 /**
  * @typedef IPoint
  * @property {integer} x.required
- * @property {integer} y.required - Some description for point
+ * @property {integer} y.required - Some description for point - eg: 1234
  * @property {string} color
+ * @property {enum} status - Status values that need to be considered for filter - eg: available,pending
  */
 ```
 
