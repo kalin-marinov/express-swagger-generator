@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "start": "node ./build/bin/www.js",
-    "build": "tsc"
+    "build": "tsc",
+    "launch": "npm run build && npm start"
   },
   "dependencies": {
     "debug": "~2.6.9",

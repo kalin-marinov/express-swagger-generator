@@ -52,6 +52,7 @@ router.get('/api/people/:name/addresses', function (req, res, next) {
  * @param {AddressType} addressType.path.required - Address type
  * @returns {IAddress[]} 200 - Gets specific address of a person
  * @returns {object} 500 - Unexpected error
+ * @security Bearer
  */
 router.get('/api/people/:name/addresses/:addressType', function (req, res, next) {
   let addressType = req.params.addressType;

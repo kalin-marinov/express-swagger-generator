@@ -1,6 +1,6 @@
 import * as express from 'express';
 import * as path from 'path';
-import * as swaggerGenerator from 'express-swagger-generator';
+import { startFromOptions } from 'express-swagger-generator';
 
 export function configureSwagger(app: express.Express) {
   let options = {
@@ -16,13 +16,20 @@ export function configureSwagger(app: express.Express) {
         "application/json",
         "application/xml"
       ],
-      schemes: ['http', 'https']
+      schemes: ['http', 'https'],
+      securityDefinitions: {
+        Bearer: {
+          type: 'apiKey',
+          in: 'header',
+          name: 'Authorization',
+          description: "",
+        }
+      }
     },
     basedir: __dirname,
     files: ['../../routes/**/*.ts'], //Path to the API handle folder,
     typeDefinitions: path.join(__dirname, '../../@types/api/**/*.ts')
   };
 
-  swaggerGenerator(app)(options);
-
+  startFromOptions(app)(options);
 }

@@ -1,6 +1,6 @@
 const express = require('express');
 const path = require('path');
-const swaggerGenerator = require('express-swagger-generator');
+const { startFromOptions } = require('express-swagger-generator');
 
 function configureSwagger(app) {
 
@@ -24,7 +24,7 @@ function configureSwagger(app) {
     typeDefinitions: path.join(__dirname, '../@types/api/**/*.ts')
   };
 
-  swaggerGenerator(app)(options);
+  startFromOptions(app)(options);
 }
 
 module.exports = configureSwagger;

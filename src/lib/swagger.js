@@ -64,6 +64,7 @@ function parseType(obj) {
         return 'string';
     }
 }
+
 function parseSchema(obj) {
 
     // Check if it's an array
@@ -125,9 +126,9 @@ function parseItems(obj) {
     if (obj.applications && obj.applications.length > 0 && obj.applications[0].name) {
         const type = obj.applications[0].name;
         if (type == 'object' || type == 'string' || type == 'integer' || type == 'boolean') {
-            return {"type": type}
+            return { "type": type }
         }
-        else return {"$ref": "#/definitions/" + type};
+        else return { "$ref": "#/definitions/" + type };
     }
     else return undefined;
 }
@@ -183,7 +184,7 @@ function parseTypedef(tags) {
         properties: {}
     };
     if (tags[0].type && tags[0].type.name) {
-        details.allOf = [{"$ref": '#/definitions/' + tags[0].type.name}]
+        details.allOf = [{ "$ref": '#/definitions/' + tags[0].type.name }]
     }
     for (let i = 1; i < tags.length; i++) {
         if (tags[i].title == 'property') {
@@ -210,7 +211,7 @@ function parseTypedef(tags) {
                 };
                 details.properties[propName] = prop
 
-                if(prop.type == 'enum') {
+                if (prop.type == 'enum') {
                     let parsedEnum = parseEnums('-eg:' + example)
                     prop.type = parsedEnum.type
                     prop.enum = parsedEnum.enums
@@ -289,11 +290,11 @@ function parseHeaders(comments) {
 
 function parseEnums(description) {
     let enums = ('' + description).split(/-\s*eg:\s*/)
-    if(enums.length < 2) {
+    if (enums.length < 2) {
         return []
     }
     let parseType = enums[1].split(":")
-    if(parseType.length === 1) {
+    if (parseType.length === 1) {
         parseType = ['string', parseType[0]]
     }
     return {
@@ -341,7 +342,7 @@ function fileFormat(comments) {
                     // we only want a type if there is no referenced schema
                     if (!schema) {
                         properties.type = parseType(comments[i][j]['type'])
-                        if(properties.type == 'enum') {
+                        if (properties.type == 'enum') {
                             let parsedEnum = parseEnums(comments[i][j]['description'])
                             properties.type = parsedEnum.type
                             properties.enum = parsedEnum.enums
@@ -442,53 +443,60 @@ function getTypeDefinitions(globPath) {
 
 
 /**
+ * 
+ * @param {object} options 
+ */
+function createSwaggerObject(options) {
+    if (!options) {
+        throw new Error('\'options\' is required.');
+    } else if (!options.swaggerDefinition) {
+        throw new Error('\'swaggerDefinition\' is required.');
+    } else if (!options.files) {
+        throw new Error('\'files\' is required.');
+    }
+
+    // Build basic swagger json
+    let swaggerObject = swaggerHelpers.swaggerizeObj(options.swaggerDefinition);
+    let apiFiles = convertGlobPaths(options.basedir, options.files);
+
+    // Parse typescript definitions:
+    let typescriptDefinitions = getTypeDefinitions(options.typeDefinitions);
+    swaggerHelpers.addDataToSwaggerObject(swaggerObject, [{ definitions: typescriptDefinitions.definitions }]);
+
+    // Parse the documentation in the APIs array.
+    for (let i = 0; i < apiFiles.length; i = i + 1) {
+        let parsedFile = parseApiFile(apiFiles[i]);
+        let comments = filterJsDocComments(parsedFile);
+
+        for (let j in comments) {
+
+            let parsed = fileFormat(comments[j])
+            swaggerHelpers.addDataToSwaggerObject(swaggerObject, [{
+                paths: parsed.parameters,
+                tags: parsed.tags,
+                definitions: parsed.definitions
+            }]);
+        }
+    }
+    return swaggerObject;
+}
+
+module.exports.createSwaggerObject = createSwaggerObject;
+
+/**
  * Generates the swagger spec
  * @function
- * @param {object} options - Configuration options
+ * @param {app} options - Configuration options
  * @returns {array} Swagger spec
  * @requires swagger-parser
  */
-module.exports = function (app) {
+module.exports.startFromOptions = function (app) {
 
     return function (options) {
-        /* istanbul ignore if */
-        if (!options) {
-            throw new Error('\'options\' is required.');
-        } else /* istanbul ignore if */ if (!options.swaggerDefinition) {
-            throw new Error('\'swaggerDefinition\' is required.');
-        } else /* istanbul ignore if */ if (!options.files) {
-            throw new Error('\'files\' is required.');
-        }
+        let swaggerObject = createSwaggerObject(options);
 
-        // Build basic swagger json
-        let swaggerObject = swaggerHelpers.swaggerizeObj(options.swaggerDefinition);
-        let apiFiles = convertGlobPaths(options.basedir, options.files);
-
-        // Parse typescript definitions:
-        let typescriptDefinitions = getTypeDefinitions(options.typeDefinitions);
-        swaggerHelpers.addDataToSwaggerObject(swaggerObject, [{ definitions: typescriptDefinitions.definitions }]);
-
-        // Parse the documentation in the APIs array.
-        for (let i = 0; i < apiFiles.length; i = i + 1) {
-            let parsedFile = parseApiFile(apiFiles[i]);
-            //console.log(JSON.stringify(parsedFile))
-            let comments = filterJsDocComments(parsedFile);
-
-            for (let j in comments) {
-
-                let parsed = fileFormat(comments[j])
-                swaggerHelpers.addDataToSwaggerObject(swaggerObject, [{
-                    paths: parsed.parameters,
-                    tags: parsed.tags,
-                    definitions: parsed.definitions
-                }]);
-            }
-        }
-
-        parser.parse(swaggerObject, function (err, api) {
-            if (!err) {
-                swaggerObject = api;
-            }
+        parser.parse(swaggerObject, (err, api) => {
+            if (!err) swaggerObject = api;
         });
 
         let url = options.route ? options.route.url : '/api-docs'
@@ -501,6 +509,6 @@ module.exports = function (app) {
             route: url,
             docs: docs
         }));
-        return swaggerObject;
+
     }
-};
+}

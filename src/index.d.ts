@@ -1,6 +1,6 @@
 import * as express from 'express';
 
-declare function expressSwaggerGenerator(app: express.Express): expressSwaggerGenerator.IOptionParserFunction;
+
 
 declare namespace expressSwaggerGenerator {
     interface ISwaggerOptions {
@@ -20,9 +20,11 @@ declare namespace expressSwaggerGenerator {
         typeDefinitions?: string
     }
 
-    interface IOptionParserFunction {
-        (options: ISwaggerOptions): void;
-    }
+    type IOptionParserFunction = (options: ISwaggerOptions) => void;
+
+    function startFromOptions(app: express.Express): IOptionParserFunction;
+
+    function createSwaggerObject(options: ISwaggerOptions): void;
 }
 
 export = expressSwaggerGenerator;
