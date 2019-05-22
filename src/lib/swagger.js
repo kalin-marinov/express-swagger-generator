@@ -443,8 +443,7 @@ function getTypeDefinitions(globPath) {
 
 
 /**
- * 
- * @param {object} options 
+ * Creates and returns the swagger definition as a JSON object
  */
 function createSwaggerObject(options) {
     if (!options) {
@@ -481,6 +480,25 @@ function createSwaggerObject(options) {
     return swaggerObject;
 }
 
+/** Registers an express midleware based on  */
+function expressMiddleware(app, swaggerObject, route) {
+    parser.parse(swaggerObject, (err, api) => {
+        if (!err) swaggerObject = api;
+    });
+
+    let url = route ? route.url : '/api-docs'
+    let docs = route ? route.docs : '/api-docs.json'
+
+    app.use(docs, function (req, res) {
+        res.json(swaggerObject);
+    });
+    app.use(url, swaggerUi({
+        route: url,
+        docs: docs
+    }));
+}
+
+
 module.exports.createSwaggerObject = createSwaggerObject;
 
 /**
@@ -490,25 +508,10 @@ module.exports.createSwaggerObject = createSwaggerObject;
  * @returns {array} Swagger spec
  * @requires swagger-parser
  */
-module.exports.startFromOptions = function (app) {
-
-    return function (options) {
-        let swaggerObject = createSwaggerObject(options);
-
-        parser.parse(swaggerObject, (err, api) => {
-            if (!err) swaggerObject = api;
-        });
-
-        let url = options.route ? options.route.url : '/api-docs'
-        let docs = options.route ? options.route.docs : '/api-docs.json'
-
-        app.use(docs, function (req, res) {
-            res.json(swaggerObject);
-        });
-        app.use(url, swaggerUi({
-            route: url,
-            docs: docs
-        }));
-
-    }
+module.exports.startFromOptions = function (app, options) {
+    return expressMiddleware(app, createSwaggerObject(options), options.route);
 }
+
+module.exports.startFromSwaggerObject = function(app, swaggerObject, routes){
+    return expressMiddleware(app, swaggerObject, routes);
+};

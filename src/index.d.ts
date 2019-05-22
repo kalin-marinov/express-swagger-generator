@@ -20,11 +20,12 @@ declare namespace expressSwaggerGenerator {
         typeDefinitions?: string
     }
 
-    type IOptionParserFunction = (options: ISwaggerOptions) => void;
 
-    function startFromOptions(app: express.Express): IOptionParserFunction;
+    function startFromOptions(app: express.Express, options: ISwaggerOptions): void;
 
     function createSwaggerObject(options: ISwaggerOptions): void;
+
+    function startFromSwaggerObject(app: express.Express, swaggerObject: any, routes?: { url: string, docs: string }): void;
 }
 
 export = expressSwaggerGenerator;

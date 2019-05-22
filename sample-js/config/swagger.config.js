@@ -24,7 +24,7 @@ function configureSwagger(app) {
     typeDefinitions: path.join(__dirname, '../@types/api/**/*.ts')
   };
 
-  startFromOptions(app)(options);
+  startFromOptions(app, options);
 }
 
 module.exports = configureSwagger;
