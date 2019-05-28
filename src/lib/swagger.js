@@ -316,6 +316,14 @@ function fileFormat(comments) {
                 continue;
             }
             for (let j in comments[i]) {
+                // if this comment has errors, skip to next so swagger does not crash parsing it
+                if(!!comments[i][j].errors) {
+                    for(let error of comments[i][j].errors) {
+                        console.error(`Error '${error}' in route with description '${comments.description}'`)
+                    }
+                    continue;
+                }
+
                 let title = comments[i][j]['title']
                 if (title == 'route') {
                     route = parseRoute(comments[i][j]['description'])
