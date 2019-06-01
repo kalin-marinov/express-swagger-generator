@@ -1,8 +1,9 @@
 import * as express from 'express';
-
+// import { Spec } from 'swagger-schema-official';
 
 
 declare namespace expressSwaggerGenerator {
+
     interface ISwaggerOptions {
         swaggerDefinition: {
             info: {
@@ -20,12 +21,15 @@ declare namespace expressSwaggerGenerator {
         typeDefinitions?: string
     }
 
+    interface ISwaggerManager {
+        getObject(): any;
+        registerInExpress(app: express.Express, routes?: { url: string, docs: string }): void;
+        validate(callback: (err: any, result?: any) => void): void;
+    }
 
-    function startFromOptions(app: express.Express, options: ISwaggerOptions): void;
+    function fromObject(swaggerObject: any): ISwaggerManager;
 
-    function createSwaggerObject(options: ISwaggerOptions): void;
-
-    function startFromSwaggerObject(app: express.Express, swaggerObject: any, routes?: { url: string, docs: string }): void;
+    function fromOptions(options: ISwaggerOptions): ISwaggerManager;
 }
 
 export = expressSwaggerGenerator;

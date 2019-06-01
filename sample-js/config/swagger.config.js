@@ -1,6 +1,6 @@
 const express = require('express');
 const path = require('path');
-const { startFromOptions } = require('express-swagger-generator');
+const { fromOptions } = require('express-swagger-generator');
 
 function configureSwagger(app) {
 
@@ -8,7 +8,7 @@ function configureSwagger(app) {
     swaggerDefinition: {
       info: {
         description: 'WEB API Test',
-        title: 'WHITELABEL API',
+        title: 'SAMPLE SWAGGER API WITH PLAIN JS',
         version: '1.0.0',
       },
       host: "localhost:3000",
@@ -20,11 +20,11 @@ function configureSwagger(app) {
       schemes: ['http', 'https']
     },
     basedir: __dirname,
-    files: ['../routes/**/*.js'], //Path to the API handle folder,
+    files: ['../routes/**/*.js'],
     typeDefinitions: path.join(__dirname, '../@types/api/**/*.ts')
   };
 
-  startFromOptions(app, options);
+  fromOptions(options).registerInExpress(app);
 }
 
 module.exports = configureSwagger;

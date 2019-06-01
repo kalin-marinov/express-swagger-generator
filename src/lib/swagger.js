@@ -317,8 +317,8 @@ function fileFormat(comments) {
             }
             for (let j in comments[i]) {
                 // if this comment has errors, skip to next so swagger does not crash parsing it
-                if(!!comments[i][j].errors) {
-                    for(let error of comments[i][j].errors) {
+                if (!!comments[i][j].errors) {
+                    for (let error of comments[i][j].errors) {
                         console.error(`Error '${error}' in route with description '${comments.description}'`)
                     }
                     continue;
@@ -421,7 +421,6 @@ function convertGlobPaths(base, globs) {
     }, []);
 }
 
-
 /**
  * Extracts type definition from files using glob pattern
  * @function
@@ -447,7 +446,6 @@ function getTypeDefinitions(globPath) {
 
     return schema;
 }
-
 
 
 /**
@@ -489,13 +487,13 @@ function createSwaggerObject(options) {
 }
 
 /** Registers an express midleware based on  */
-function expressMiddleware(app, swaggerObject, route) {
+function expressMiddleware(app, swaggerObject, routes) {
     parser.parse(swaggerObject, (err, api) => {
         if (!err) swaggerObject = api;
     });
 
-    let url = route ? route.url : '/api-docs'
-    let docs = route ? route.docs : '/api-docs.json'
+    let url = routes ? routes.url : '/api-docs'
+    let docs = routes ? routes.docs : '/api-docs.json'
 
     app.use(docs, function (req, res) {
         res.json(swaggerObject);
@@ -506,20 +504,17 @@ function expressMiddleware(app, swaggerObject, route) {
     }));
 }
 
-
-module.exports.createSwaggerObject = createSwaggerObject;
-
-/**
- * Generates the swagger spec
- * @function
- * @param {app} options - Configuration options
- * @returns {array} Swagger spec
- * @requires swagger-parser
- */
-module.exports.startFromOptions = function (app, options) {
-    return expressMiddleware(app, createSwaggerObject(options), options.route);
+function fromObject(swaggerObject) {
+    return {
+        getObject: function () { return swaggerObject },
+        registerInExpress: function (app, routes) { expressMiddleware(app, swaggerObject, routes); },
+        validate: function (callback) { parser.parse(swaggerObject, callback) }
+    }
 }
 
-module.exports.startFromSwaggerObject = function(app, swaggerObject, routes){
-    return expressMiddleware(app, swaggerObject, routes);
-};
+function fromOptions(options) {
+    return fromObject(createSwaggerObject(options));
+}
+
+module.exports.fromObject = fromObject;
+module.exports.fromOptions = fromOptions;

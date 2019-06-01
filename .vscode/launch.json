@@ -8,7 +8,7 @@
             "type": "node",
             "request": "launch",
             "name": "Start Sample Typescript",
-            "preLaunchTask": "build",
+            "preLaunchTask": "npm: build - sample",
             "program": "${workspaceFolder}/sample/bin/www.ts",
             "outFiles": [
                 "${workspaceFolder}/sample/build/**/*.js"

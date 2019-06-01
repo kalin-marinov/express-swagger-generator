@@ -1,6 +1,6 @@
 import * as express from 'express';
 import * as path from 'path';
-import { startFromOptions } from 'express-swagger-generator';
+import { fromOptions } from 'express-swagger-generator';
 
 export function configureSwagger(app: express.Express) {
   let options = {
@@ -24,12 +24,12 @@ export function configureSwagger(app: express.Express) {
           name: 'Authorization',
           description: "",
         }
-      }
+      },
     },
     basedir: __dirname,
     files: ['../../routes/**/*.ts'], //Path to the API handle folder,
     typeDefinitions: path.join(__dirname, '../../@types/api/**/*.ts')
   };
 
-  startFromOptions(app, options);
+  fromOptions(options).registerInExpress(app, { url: "/api/docs", docs: "/api/docs/swagger.json" });
 }
