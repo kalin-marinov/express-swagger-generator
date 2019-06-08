@@ -32,7 +32,7 @@ router.get('/api/people/:name', function (req, res, next) {
 
 
 /**
- * This function comment is parsed by doctrine
+ * Gets people addresses
  * @route GET /api/people/{name}/addresses
  * @group People Addresses - For the addresses of the people
  * @param {string} name.path.required - Name of the person
@@ -61,7 +61,7 @@ router.get('/api/people/:name/addresses/:addressType', function (req, res, next)
 
 
 /**
- * This function comment is parsed by doctrine
+ * Gets people
  * @route POST /api/people
  * @group People - Information about them people
  * @param {IPerson} person.body.required - Information for the person
@@ -88,12 +88,11 @@ router.put('/api/people', function (req, res, next) {
 });
 
 /**
- * This function comment is parsed by doctrine
+ * Delete a person
  * @route DELETE /api/people/{name}
  * @group People - Information about them people
- * @param {string} name.path.required - Name of the person
- * @returns {} 204 - Sucess
- * @returns {Error} 500 - Unexpected error
+ * @returns {void} 204 - An array of people
+ * @returns {object} 500 - Unexpected error
  */
 router.delete('/api/people/:name', function (req, res, next) {
   res.status(204).end();

@@ -6,7 +6,7 @@
 
 import app from '../app';
 import * as http from 'http';
-import * as debugFunction from 'debug';
+import debugFunction from 'debug';
 
 var debug = debugFunction('swagger-sample:server');
 

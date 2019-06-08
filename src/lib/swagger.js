@@ -462,7 +462,7 @@ function createSwaggerObject(options) {
 
     // Build basic swagger json
     let swaggerObject = swaggerHelpers.swaggerizeObj(options.swaggerDefinition);
-    let apiFiles = convertGlobPaths(options.basedir, options.files);
+    let apiFiles = convertGlobPaths(options.basedir || process.cwd(), options.files);
 
     // Parse typescript definitions:
     let typescriptDefinitions = getTypeDefinitions(options.typeDefinitions);

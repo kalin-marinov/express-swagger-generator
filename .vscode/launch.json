@@ -12,7 +12,8 @@
             "program": "${workspaceFolder}/sample/bin/www.ts",
             "outFiles": [
                 "${workspaceFolder}/sample/build/**/*.js"
-            ]
+            ],
+            "cwd": "${workspaceFolder}/sample"
         },
         {
             "type": "node",

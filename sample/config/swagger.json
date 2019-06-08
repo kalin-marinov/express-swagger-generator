@@ -1,0 +1,32 @@
+{
+    "swaggerDefinition": {
+        "info": {
+            "description": "WEB API Test",
+            "title": "WEB API Test",
+            "version": "1.0.0"
+        },
+        "host": "localhost:3000",
+        "basePath": "",
+        "produces": [
+            "application/json",
+            "application/xml"
+        ],
+        "schemes": [
+            "http",
+            "https"
+        ],
+        "securityDefinitions": {
+            "Bearer": {
+                "type": "apiKey",
+                "in": "header",
+                "name": "Authorization",
+                "description": ""
+            }
+        }
+    },
+    "basedir": "",
+    "files": [
+        "routes/**/*.ts"
+    ],
+    "typeDefinitions": "@types/api/**/*.ts"
+}

@@ -5,7 +5,8 @@
   "scripts": {
     "start": "node ./build/bin/www.js",
     "build": "tsc",
-    "launch": "npm run build && npm start"
+    "launch": "npm run build && npm start",
+    "swagger-gen": "express-swagger-generator config/swagger.json config/swagger-def.json"
   },
   "dependencies": {
     "debug": "~2.6.9",
@@ -18,6 +19,6 @@
     "@types/express": "^4.11.1",
     "@types/morgan": "^1.7.35",
     "@types/node": "^10.1.2",
-    "typescript": "^2.8.3"
+    "typescript": "^3.5.1"
   }
 }
