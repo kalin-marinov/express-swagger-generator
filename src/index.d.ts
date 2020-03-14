@@ -1,4 +1,5 @@
 import * as express from 'express';
+import { RequestHandler } from 'express';
 // import { Spec } from 'swagger-schema-official';
 
 
@@ -23,7 +24,7 @@ declare namespace expressSwaggerGenerator {
 
     interface ISwaggerManager {
         getObject(): any;
-        registerInExpress(app: express.Express, routes?: { url: string, docs: string }): void;
+        registerInExpress(app: express.Express, routes?: { url: string, docs: string }, middlewares?: RequestHandler | RequestHandler[]): void;
         validate(callback: (err: any, result?: any) => void): void;
     }
 

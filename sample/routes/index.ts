@@ -55,7 +55,7 @@ router.get('/api/people/:name/addresses', function (req, res, next) {
  * @security Bearer
  */
 router.get('/api/people/:name/addresses/:addressType', function (req, res, next) {
-  let addressType = req.params.addressType;
+  let addressType = Number(req.params.addressType) as AddressType;
   res.json([{ number: 10, street: "random str", type: addressType } as IAddress]);
 });
 

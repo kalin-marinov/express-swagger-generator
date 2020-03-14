@@ -487,7 +487,7 @@ function createSwaggerObject(options) {
 }
 
 /** Registers an express midleware based on  */
-function expressMiddleware(app, swaggerObject, routes) {
+function expressMiddleware(app, swaggerObject, routes, middlewares) {
     parser.parse(swaggerObject, (err, api) => {
         if (!err) swaggerObject = api;
     });
@@ -495,10 +495,14 @@ function expressMiddleware(app, swaggerObject, routes) {
     let url = routes ? routes.url : '/api-docs'
     let docs = routes ? routes.docs : '/api-docs.json'
 
-    app.use(docs, function (req, res) {
+    if (!middlewares) middlewares = [];
+    else if (!Array.isArray(middlewares)) middlewares = [middlewares];
+
+    app.use(docs, ...middlewares, function (req, res) {
         res.json(swaggerObject);
     });
-    app.use(url, swaggerUi({
+
+    app.use(url, ...middlewares, swaggerUi({
         route: url,
         docs: docs
     }));
@@ -507,7 +511,7 @@ function expressMiddleware(app, swaggerObject, routes) {
 function fromObject(swaggerObject) {
     return {
         getObject: function () { return swaggerObject },
-        registerInExpress: function (app, routes) { expressMiddleware(app, swaggerObject, routes); },
+        registerInExpress: function (app, routes, middlewares) { expressMiddleware(app, swaggerObject, routes, middlewares); },
         validate: function (callback) { parser.parse(swaggerObject, callback) }
     }
 }

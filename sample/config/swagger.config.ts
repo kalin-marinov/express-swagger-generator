@@ -1,6 +1,6 @@
 import * as express from 'express';
 import { fromOptions, fromObject } from 'express-swagger-generator';
-import  options from './swagger.json';
+import options from './swagger.json';
 //import  swaggerObject from './swagger-def.json';
 
 export function configureSwagger(app: express.Express) {

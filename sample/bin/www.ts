@@ -93,4 +93,4 @@ function onListening() {
 
 
 process.on('uncaughtException', err => console.log(`Caught unhandled exception: ${err.message} > Stack: ${err.stack}`));
-process.on('unhandledRejection', (reason, p) => console.log(`Unhandled Rejection at: Promise${p}. Reason: ${reason.message} > Stack: ${reason.stack}.`));
+process.on('unhandledRejection', (reason: any, p) => console.log(`Unhandled Rejection at: Promise${p}. Reason: ${reason.message} > Stack: ${reason.stack}.`));
